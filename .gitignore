@@ -1,0 +1,43 @@
+# Android Studio, instrucciones locales y configuración personal
+*.iml
+.idea/
+local.properties
+/AGENTS.md
+
+# Gradle, Kotlin y archivos generados de cualquier módulo
+.gradle/
+.kotlin/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.hprof
+*.log
+
+# Artefactos: se generan localmente, no se incluyen en el repositorio
+*.apk
+*.aab
+*.apks
+*.dex
+
+# Almacenes de claves, claves privadas y configuración con secretos
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+keystore.properties
+signing.properties
+secrets.properties
+.env
+.env.*
+!.env.example
+
+# Descargas y decodificados locales del reconocimiento (apartado 5.4)
+/reconocimiento-local/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
