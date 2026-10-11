@@ -7,7 +7,7 @@ Repositorio grupal de **Seguridad en Entornos Móviles**, Universidad de Málaga
 | Campo | Información |
 | --- | --- |
 | Identificación del equipo | Supergrupo 1, Grupo D |
-| Nombre propio del equipo | **Pendiente de acordar** |
+| Nombre propio del equipo | JADE Salud |
 | Integrantes | Angel Gallego Güeto; Jorge de Torres Suárez; David López Callejón; Esteban Sánchez Gámez |
 | Dominio asignado | Salud — Historial médico personal |
 | Nombre propuesto de la aplicación | SaludApp; **pendiente de ratificar** |
@@ -124,7 +124,7 @@ Observaciones para el cuaderno del equipo:
 | Entregable | Estado |
 | --- | --- |
 | Proyecto Android que compila y se ejecuta | **Verificado** localmente; pendiente de acuerdo como base común |
-| README con equipo, integrantes, dominio, descripción y cuatro requisitos | **Preparado parcialmente**: faltan el nombre propio del equipo y el acuerdo sobre el permiso peligroso |
+| README con equipo, integrantes, dominio, descripción y cuatro requisitos | **Preparado parcialmente**: falta el acuerdo sobre el permiso peligroso |
 | Convenciones y justificación del `targetSdk` | **Documentadas con propuestas**; faltan ratificación, estrategia de ramas acordada y asignación de responsables |
 | Tabla de reconocimiento de una aplicación real completada | **Pendiente**; plantilla y procedimiento preparados |
 | `.gitignore` correcto y ausencia de archivos sensibles en el histórico | **Exclusiones revisadas**; índice local sin archivos generados ni de claves, sin historial local; comprobación remota pendiente |
