@@ -1,0 +1,72 @@
+[
+  {
+    "nombre": "android.permission.ACCESS_COARSE_LOCATION",
+    "protectionLevel_API34": "dangerous|instant",
+    "granted_package": "false"
+  },
+  {
+    "nombre": "android.permission.ACCESS_FINE_LOCATION",
+    "protectionLevel_API34": "dangerous|instant",
+    "granted_package": "false"
+  },
+  {
+    "nombre": "android.permission.ACCESS_BACKGROUND_LOCATION",
+    "protectionLevel_API34": "dangerous|instant",
+    "granted_package": "false"
+  },
+  {
+    "nombre": "android.permission.POST_NOTIFICATIONS",
+    "protectionLevel_API34": "dangerous|instant",
+    "granted_package": "false"
+  },
+  {
+    "nombre": "android.permission.SCHEDULE_EXACT_ALARM",
+    "protectionLevel_API34": "signature|privileged|appop",
+    "granted_package": "false"
+  },
+  {
+    "nombre": "android.permission.RECEIVE_BOOT_COMPLETED",
+    "protectionLevel_API34": "normal",
+    "granted_package": "true"
+  },
+  {
+    "nombre": "com.futsch1.medtimer.NOTIFICATION_PROCESSED",
+    "protectionLevel_API34": "normal",
+    "granted_package": "true"
+  },
+  {
+    "nombre": "android.permission.ACCESS_NOTIFICATION_POLICY",
+    "protectionLevel_API34": "normal",
+    "granted_package": "true"
+  },
+  {
+    "nombre": "android.permission.USE_FULL_SCREEN_INTENT",
+    "protectionLevel_API34": "normal|appop",
+    "granted_package": "true"
+  },
+  {
+    "nombre": "android.permission.VIBRATE",
+    "protectionLevel_API34": "normal|instant",
+    "granted_package": "true"
+  },
+  {
+    "nombre": "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+    "protectionLevel_API34": "normal",
+    "granted_package": "true"
+  },
+  {
+    "nombre": "android.permission.USE_BIOMETRIC",
+    "protectionLevel_API34": "normal",
+    "granted_package": "true"
+  },
+  {
+    "nombre": "android.permission.USE_FINGERPRINT",
+    "protectionLevel_API34": "normal",
+    "granted_package": "true"
+  },
+  {
+    "nombre": "com.futsch1.medtimer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+    "protectionLevel_API34": "signature",
+    "granted_package": "true"
+  }
+]

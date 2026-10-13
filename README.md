@@ -88,36 +88,36 @@ Comprobación local del **11 de octubre de 2026**:
 
 `.gitignore` excluye las carpetas `build` de todos los módulos, cachés de Gradle y Kotlin, configuración local del IDE, `local.properties`, `AGENTS.md`, artefactos APK/AAB, almacenes de claves, claves privadas y archivos habituales de secretos. El Gradle Wrapper, incluido su JAR, permanece versionable. `app/.gitignore` conserva además la exclusión de `/build`.
 
-La revisión del índice local no muestra archivos generados ni archivos de claves entre los archivos preparados para Git. En el momento de esta preparación no hay commits ni referencias de historial en el repositorio local; esto no verifica el contenido remoto. **Pendiente:** confirmar el acceso de todos los integrantes y del profesorado al repositorio y comprobar el histórico remoto antes de entregar. No se ha hecho commit ni push.
+La preparación inicial declaró el índice local sin archivos generados ni de claves. David revalidó el remoto el 13/10/2026: `main` en `e35a522da4cf2f5f95674d771719edda5f540c5d`, con dos commits de Esteban. La revisión de los archivos de ambos commits no encontró APK, almacenes de claves, claves privadas o `local.properties` versionados. Esto no certifica ausencia absoluta de secretos. David dispone de permiso WRITE y publica el reconocimiento en una rama mediante PR. **Pendiente:** confirmar el acceso de los demás integrantes y del profesorado; no se fusiona esta PR ni se ratifican acuerdos del equipo.
 
 ## Reconocimiento de una aplicación real (5.4)
 
-**Pendiente de completar.** No se dispone de una selección ni de resultados del análisis de una aplicación real para el reconocimiento grupal. La comprobación de ejecución del proyecto propio no sustituye esta actividad.
+**Completado por David López Callejón el 13/10/2026.** MedTimer pertenece al dominio Salud: recordatorios y registro de medicación. Se consultó su ficha de Play y se instaló el APK full firmado del autor, sin cuenta de Google ni datos médicos. [Informe reproducible y evidencias](docs/p21/reconocimiento-david.md).
 
 | Datos del análisis | Valor |
 | --- | --- |
-| Aplicación elegida y versión | **Pendiente** |
-| Nombre del paquete | **Pendiente** |
-| Procedencia | **Pendiente**: Google Play, del mismo dominio; aplicación del sistema solo si no se consigue una del dominio |
-| Dispositivo/emulador, versión de Android y fecha del análisis | **Pendiente** |
-| Versiones de ADB, apktool, aapt2 y apksigner utilizadas | **Pendiente** |
+| Aplicación elegida y versión | MedTimer `1.26.0`, versionCode `187`, variante full |
+| Nombre del paquete | `com.futsch1.medtimer` |
+| Procedencia | **APK full del release oficial de GitHub; aplicación también publicada en Google Play**. [Play](https://play.google.com/store/apps/details?id=com.futsch1.medtimer) · [Release v1.26.0](https://github.com/Futsch1/medTimer/releases/tag/v1.26.0). No se afirma identidad con el artefacto servido por Play. |
+| Dispositivo/emulador, versión de Android y fecha del análisis | AVD dedicado Pixel 6 ARM64, Android 14/API 34, parche `2023-09-05`; 13/10/2026 |
+| Versiones de ADB, apktool, aapt2 y apksigner utilizadas | ADB `37.0.0-14910828` (`1.0.41`); apktool `3.0.1`; aapt2 `2.20-13193326`; apksigner `0.9`, Build Tools `36.0.0` |
 
-Tabla requerida sobre el **artefacto base** de la aplicación elegida:
+Tabla sobre el **base.apk extraído de la aplicación instalada**:
 
-| Qué mirar | Con qué | Vuestra observación |
+| Qué mirar | Con qué | Observación |
 | --- | --- | --- |
-| Permisos declarados | `aapt2 dump permissions base.apk` | **Pendiente de obtener** |
-| Componentes exportados | `apktool d -o reconocimiento-local/decodificado reconocimiento-local/base.apk` y lectura del manifiesto | **Pendiente de obtener**: nombres, tipos y número total |
-| Esquemas de firma | `apksigner verify --print-certs -v base.apk` | **Pendiente de obtener**: esquemas verificados y certificado |
-| `minSdk` y `targetSdk` | `aapt2 dump badging base.apk` | **Pendiente de obtener** |
-| Número de piezas instaladas | `adb shell pm path <paquete>` | **Pendiente de obtener**: número de rutas y sufijo de cada pieza |
+| Permisos declarados | `aapt2 dump permissions base.apk` | **14 solicitudes:** `ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION`, `ACCESS_BACKGROUND_LOCATION`, `POST_NOTIFICATIONS`, `SCHEDULE_EXACT_ALARM`, `RECEIVE_BOOT_COMPLETED`, `ACCESS_NOTIFICATION_POLICY`, `USE_FULL_SCREEN_INTENT`, `VIBRATE`, `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`, `USE_BIOMETRIC`, `USE_FINGERPRINT` (prefijo `android.permission`), más `com.futsch1.medtimer.NOTIFICATION_PROCESSED` y `com.futsch1.medtimer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`. Las dos declaraciones propias no se cuentan dos veces. Niveles, estado concedido y justificación en el informe. |
+| Componentes exportados | apktool + manifiesto completo | **3 de 17:** activities `com.futsch1.medtimer.MainActivity` y `androidx.compose.ui.tooling.PreviewActivity`, sin permiso; receiver `androidx.profileinstaller.ProfileInstallReceiver`, protegido por `android.permission.DUMP`. Los tres declaran `exported=true` y están enabled. Se revisaron 5 activities, 8 receivers, 2 services, 2 providers y 0 activity-alias. |
+| Esquemas de firma | `apksigner verify --print-certs -v base.apk` | **Verifica v3**; v1/v2/v3.1/v4/SourceStamp false en esta ejecución. Firmante `C=49, ST=BW, L=Stuttgart, CN=Florian Fetz`. SHA-256 del certificado: `69bc7c72e499045b44c87fc8463f599472deb408c48de38de8554ae7754b9d84`. |
+| `minSdk` y `targetSdk` | `aapt2 dump badging base.apk` | `28` y `36`, respectivamente; compileSdk observado `37`. |
+| Número de piezas instaladas | `adb -s emulator-5580 shell pm path com.futsch1.medtimer` + pull de todas las rutas | **1 pieza: `base.apk`, sin splits.** 15.484.781 bytes. SHA-256: `e92c955e54a62262d0b776259faf6b04a2070bbf5920f38f1fa0db2d3aaf4330`, igual a la descarga oficial. [Mapeo ruta -> pieza -> hash](docs/p21/evidencias/piezas.json). |
 
-Para completarla, partir de la aplicación instalada: localizar el paquete con `adb shell pm list packages`, consultar **todas** las rutas con `adb shell pm path` y descargar cada pieza con `adb pull`. Conservar los APK y decodificados en `reconocimiento-local/`, excluida de Git, y analizar el APK base con las herramientas de la tabla. En Windows, usar `aapt2.exe` y `apksigner.bat` desde `build-tools/<version>` del SDK, y ejecutar apktool con su lanzador o `java -jar <ruta-a-apktool.jar>`.
+Observaciones del reconocimiento:
 
-Observaciones para el cuaderno del equipo:
+- **Permisos difíciles de justificar:** ubicación en segundo plano tiene una función documentada de posponer avisos hasta llegar a casa. No se identifica un permiso claramente ajeno; `USE_FINGERPRINT` merece revisar su necesidad por estar obsoleto desde API 28 y tener la app minSdk 28. Los cuatro permisos peligrosos permanecen denegados, así como alarmas exactas; abrir la app no demuestra uso de todos los permisos. Los permisos normales concedidos no equivalen a todos los accesos especiales concedidos.
+- **Superficie exportada:** son los tres componentes anteriores. `PreviewActivity` de tooling en release merece revisión; `ProfileInstallReceiver` exige DUMP y no está abierto a una app ordinaria. Se documenta superficie declarada, sin explotar terceros ni afirmar vulnerabilidades probadas.
 
-- ¿Hay algún permiso que no se pueda justificar por la función de la aplicación? **Pendiente de evaluar**.
-- ¿Cuántos componentes tiene exportados y cuáles son? **Pendiente de evaluar**.
+APK y decodificados completos permanecen fuera de Git. El informe enlaza capturas propias, comandos y salidas seleccionadas.
 
 ## Estado de los entregables grupales (5.5)
 
@@ -126,8 +126,8 @@ Observaciones para el cuaderno del equipo:
 | Proyecto Android que compila y se ejecuta | **Verificado** localmente; pendiente de acuerdo como base común |
 | README con equipo, integrantes, dominio, descripción y cuatro requisitos | **Preparado parcialmente**: falta el acuerdo sobre el permiso peligroso |
 | Convenciones y justificación del `targetSdk` | **Documentadas con propuestas**; faltan ratificación, estrategia de ramas acordada y asignación de responsables |
-| Tabla de reconocimiento de una aplicación real completada | **Pendiente**; plantilla y procedimiento preparados |
-| `.gitignore` correcto y ausencia de archivos sensibles en el histórico | **Exclusiones revisadas**; índice local sin archivos generados ni de claves, sin historial local; comprobación remota pendiente |
+| Tabla de reconocimiento de una aplicación real completada | **Completada por David**: MedTimer full 1.26.0 instalado, extraído y analizado; informe y evidencias enlazados |
+| `.gitignore` correcto y ausencia de archivos sensibles en el histórico | **Exclusiones revisadas**; dos commits remotos inspeccionados sin artefactos o claves observados. Revisión acotada, no garantía absoluta. |
 | Repositorio compartido con integrantes y profesorado | `origin` configurado; **accesos pendientes de confirmar** |
 
-La entrega grupal es el repositorio según 5.5, antes de P2.2. El cuaderno individual y el APK individual pertenecen a la entrega individual del apartado 6, ya resuelta según las instrucciones del proyecto.
+La entrega grupal es el repositorio según 5.5, antes de P2.2. El cuaderno y el APK individuales pertenecen al apartado 6: David ha construido, verificado y ejecutado su APK personal, y su entrega se prepara fuera de este repositorio. El estado de las entregas individuales de los demás integrantes debe confirmarlo cada autor; este README no lo acredita.

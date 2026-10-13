@@ -1,0 +1,17 @@
+package: com.futsch1.medtimer
+uses-permission: name='android.permission.ACCESS_COARSE_LOCATION'
+uses-permission: name='android.permission.ACCESS_FINE_LOCATION'
+uses-permission: name='android.permission.ACCESS_BACKGROUND_LOCATION'
+permission: com.futsch1.medtimer.NOTIFICATION_PROCESSED
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='android.permission.SCHEDULE_EXACT_ALARM'
+uses-permission: name='android.permission.RECEIVE_BOOT_COMPLETED'
+uses-permission: name='com.futsch1.medtimer.NOTIFICATION_PROCESSED'
+uses-permission: name='android.permission.ACCESS_NOTIFICATION_POLICY'
+uses-permission: name='android.permission.USE_FULL_SCREEN_INTENT'
+uses-permission: name='android.permission.VIBRATE'
+uses-permission: name='android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS'
+uses-permission: name='android.permission.USE_BIOMETRIC'
+uses-permission: name='android.permission.USE_FINGERPRINT'
+permission: com.futsch1.medtimer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission: name='com.futsch1.medtimer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'

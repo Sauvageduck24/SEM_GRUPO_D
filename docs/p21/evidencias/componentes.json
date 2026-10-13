@@ -1,0 +1,138 @@
+[
+  {
+    "tipo": "activity",
+    "nombre": "com.futsch1.medtimer.MainActivity",
+    "exported_declarado": "true",
+    "exported_efectivo": "true",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "activity",
+    "nombre": "com.futsch1.medtimer.MedTimerAppIntro",
+    "exported_declarado": null,
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "receiver",
+    "nombre": "com.futsch1.medtimer.Autostart",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "android.permission.RECEIVE_BOOT_COMPLETED"
+  },
+  {
+    "tipo": "receiver",
+    "nombre": "com.futsch1.medtimer.TimeChangeReceiver",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "provider",
+    "nombre": "androidx.core.content.FileProvider",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "service",
+    "nombre": "com.futsch1.medtimer.feature.reminders.ReminderSchedulerService",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "activity",
+    "nombre": "com.futsch1.medtimer.feature.reminders.alarm.ReminderAlarmActivity",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "receiver",
+    "nombre": "com.futsch1.medtimer.feature.reminders.ReminderProcessorBroadcastReceiver",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "com.futsch1.medtimer.NOTIFICATION_PROCESSED"
+  },
+  {
+    "tipo": "receiver",
+    "nombre": "com.futsch1.medtimer.feature.reminders.widgets.NextRemindersWidgetProvider",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "receiver",
+    "nombre": "com.futsch1.medtimer.feature.reminders.widgets.LatestRemindersWidgetProvider",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "receiver",
+    "nombre": "com.futsch1.medtimer.feature.reminders.widgets.WidgetUpdateReceiver",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "activity",
+    "nombre": "androidx.compose.ui.tooling.PreviewActivity",
+    "exported_declarado": "true",
+    "exported_efectivo": "true",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "receiver",
+    "nombre": "com.futsch1.medtimer.core.location.GeofenceBroadcastReceiver",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "provider",
+    "nombre": "androidx.startup.InitializationProvider",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "activity",
+    "nombre": "com.google.android.gms.common.api.GoogleApiActivity",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "service",
+    "nombre": "androidx.room.MultiInstanceInvalidationService",
+    "exported_declarado": "false",
+    "exported_efectivo": "false",
+    "enabled_efectivo": "true",
+    "permiso": "ninguno"
+  },
+  {
+    "tipo": "receiver",
+    "nombre": "androidx.profileinstaller.ProfileInstallReceiver",
+    "exported_declarado": "true",
+    "exported_efectivo": "true",
+    "enabled_efectivo": "true",
+    "permiso": "android.permission.DUMP"
+  }
+]

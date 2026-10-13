@@ -1,0 +1,7 @@
+Starting: Intent { cmp=com.futsch1.medtimer/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.futsch1.medtimer/.MedTimerAppIntro
+TotalTime: 3377
+WaitTime: 3386
+Complete
