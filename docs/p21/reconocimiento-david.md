@@ -104,4 +104,4 @@ El intento `pm list permissions -f` devolvió 255 por un fallo del listado de et
 
 ![MedTimer ejecutándose sin datos de medicación](evidencias/medtimer-ejecucion.png)
 
-El trabajo de David completa 5.4. Ratificación de convenciones, asignación de responsables de funcionalidades y confirmación de accesos del profesorado e integrantes siguen pendientes del equipo.
+Este informe recoge el reconocimiento del apartado 5.4. Las convenciones, el reparto acordado y el acceso al repositorio se describen en el [README del equipo](../../README.md).
