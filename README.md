@@ -83,7 +83,9 @@ Como convenciones de **Clean Code**, se utilizarán nombres descriptivos, funcio
 
 ### Responsables
 
-El apartado 5.2 exige una persona responsable de cada requisito mínimo. El equipo acepta el siguiente reparto inicial, comunicado por Ángel el 14/10/2026. Los bloques incluyen pantallas, persistencia de cada funcionalidad, gestión de errores, comprobaciones y documentación; su carga se revisará antes de implementarlos.
+El apartado 5.2 exige una persona responsable de cada requisito mínimo. El equipo acepta el siguiente reparto inicial, comunicado por Ángel el 14/10/2026. **Cada integrante construirá, analizará y protegerá su bloque, justificará sus decisiones y aportará evidencias propias de comprobación.** El reparto asigna cuatro ámbitos de seguridad móvil: identidad y sesión, datos en reposo, comunicación remota y permisos/acceso a archivos. Su carga incluirá implementación, protección, pruebas, revisión y documentación.
+
+La siguiente tabla concreta las funcionalidades. David coordina el almacenamiento del historial, no la administración de cuentas de usuario; la autenticación y la sesión corresponden a Ángel.
 
 | Responsable | Requisito que coordina | Alcance de su bloque |
 | --- | --- | --- |
@@ -92,11 +94,41 @@ El apartado 5.2 exige una persona responsable de cada requisito mínimo. El equi
 | Jorge de Torres Suárez | API remota | Búsqueda y ficha de medicamentos desde la API, estados de carga y error, y gestión de tratamientos: alta, consulta, edición y borrado, incluida su persistencia |
 | Esteban Sánchez Gámez | Permiso peligroso y su justificación | Permiso CAMERA y su denegación, captura y carpeta de informes con título y fecha, y agenda de citas manuales; incluida la persistencia de informes y citas |
 
+### Responsabilidad de seguridad y aprendizajes por integrante
+
+Esta matriz define **objetivos de trabajo y aprendizaje para las prácticas posteriores**, no controles ya implementados. Se concretarán con los enunciados de los bloques III y IV y con las tecnologías elegidas. Login, almacenamiento y API son requisitos técnicos; CAMERA es el permiso Android de protección `dangerous`.
+
+| Responsable | Riesgos y decisiones de seguridad que trabajará | Aprendizajes que deberá explicar | Ejemplos de evidencias que aportará |
+| --- | --- | --- | --- |
+| **Ángel — identidad, sesión y acceso** | Acceso sin autenticar, sesión reutilizada tras cerrar sesión y exposición de credenciales. Definir el mecanismo de autenticación, el ciclo de sesión y las comprobaciones de acceso; revisar almacenamiento de credenciales o tokens, si los hay, y exposición de pantallas internas | Diferenciar autenticación y autorización; explicar qué protege una sesión y por qué ocultar una pantalla no sustituye comprobar el acceso; razonar sobre componentes exportados y exposición de credenciales en código o registros | Comprobaciones de acceso sin sesión, acceso válido y acceso tras logout; intento por ADB de invocar una pantalla interna propia si existe como componente; inspección de manifiesto, APK decompilado y logcat para comprobar exposición de credenciales y sesión |
+| **David — datos sensibles en reposo** | Lectura indebida de antecedentes, datos de un usuario visibles para otro, exposición en copias de seguridad o registros y gestión incorrecta de claves. Definir almacenamiento privado, separación por usuario y política de copias/borrado; valorar y justificar el cifrado y la gestión de claves según la práctica | Explicar los límites del aislamiento de Android y del almacenamiento privado; diferenciar aislamiento y cifrado; justificar cómo se protegen los datos y las claves y qué ocurre al cambiar de cuenta | Comprobación de que un usuario no consulta el historial de otro; inspección de la persistencia en el entorno de prueba, logcat y reglas de backup; si se aplica cifrado, comparación de la representación almacenada y demostración de recuperación autorizada |
+| **Jorge — comunicación remota y datos recibidos** | Tráfico interceptado, conexiones no confiables, respuestas inesperadas y filtración de datos en peticiones o errores. Usar HTTPS sin anular la validación de certificados, validar los datos recibidos y definir qué información sale del dispositivo; proteger tokens si el servicio los utiliza | Explicar confidencialidad e integridad de la comunicación, confianza en certificados y validación de entradas remotas; distinguir un error de red de una respuesta inválida; justificar los datos enviados al servicio | Evidencia del destino y contenido de las peticiones con datos sintéticos, revisión de la configuración de red y pruebas ante desconexión y respuestas inválidas; cuando lo permita el entorno de la práctica, comprobar rechazo de un certificado no confiable en un servidor de prueba propio |
+| **Esteban — permisos, cámara e informes** | Permisos excesivos, capturas sin autorización y fotografías accesibles mediante archivos, URI o componentes expuestos. Solicitar CAMERA al usar la función, gestionar denegación y revocación, guardar informes con acceso restringido y revisar cualquier mecanismo de compartición | Explicar mínimo privilegio, permiso en tiempo de ejecución y su diferencia respecto a autenticación; razonar sobre componentes exportados, acceso a archivos y concesiones URI; describir qué ocurre cuando falta el permiso | Pruebas de permiso concedido, denegado y revocado; inspección del manifiesto y de la ubicación de imágenes; comprobación del acceso a informes y, si existe compartición, del alcance y duración de las concesiones URI |
+
+Ángel y David acordarán la identidad con la que se asocian los datos; Esteban y David acordarán el almacenamiento de imágenes y sus controles. Jorge utilizará los mismos contratos para guardar tratamientos. Estos puntos compartidos se documentarán y se comprobarán en conjunto, sin atribuir a una sola persona todo el trabajo de integración.
+
+### Evidencias y contribución individual
+
+Cada integrante documentará para su bloque:
+
+1. **Riesgo y fundamento:** qué dato o recurso protege, qué uso indebido contempla y con qué concepto de la asignatura se relaciona.
+2. **Decisión y contribución:** qué ha implementado o revisado, por qué ha elegido el control y qué commit o pull request contiene su trabajo.
+3. **Comprobación reproducible:** entorno y versiones, pasos o comandos, resultado esperado, resultado realmente observado y capturas o salidas que lo respaldan.
+4. **Interpretación y límites:** qué demuestra la prueba, qué permanece pendiente y qué limitaciones conserva la solución.
+
+Las comprobaciones de funcionamiento normal se acompañarán de casos de fallo o acceso indebido apropiados al bloque. Los controles del Bloque III se documentarán con la situación inicial y el resultado tras aplicarlos cuando corresponda. Se utilizarán datos sintéticos y entornos autorizados; las evidencias no incluirán credenciales ni información médica real.
+
+Las evidencias futuras se organizarán por bloque y autor en `docs/seguridad/` y se enlazarán desde el README cuando existan. **Actualmente esta sección es un plan de comprobación:** no acredita que esas pruebas se hayan ejecutado ni sustituye el cuaderno y APK individuales de P2.1. Cada integrante deberá poder explicar y reproducir sus decisiones y pruebas; el reparto por sí solo no acredita aprendizaje.
+
+### Integración y equilibrio del reparto
+
 David coordina la base de almacenamiento, pero **cada responsable implementa la persistencia de sus propios datos** utilizando los contratos acordados. David no recibe toda la programación de tratamientos, citas e informes. Jorge combina la integración de API con tratamientos, y Esteban combina cámara e informes con una agenda sencilla, para compensar las diferencias de carga entre los cuatro requisitos.
 
 Todos incluyen las capas necesarias de presentación, dominio y datos en su bloque, así como sus comprobaciones y documentación. La arquitectura y los componentes comunes se acuerdan entre los cuatro; Ángel coordina la navegación, pero no asume en solitario toda la infraestructura ni todas las integraciones.
 
-**Revisión de cambios:** Ángel y David revisan mutuamente sus cambios; Jorge y Esteban hacen lo mismo. Los cambios en contratos compartidos requieren revisión de los responsables afectados antes de integrar. La protección de cada requisito se abordará en el Bloque III y el reparto de la auditoría de otra aplicación en el Bloque IV se acordará cuando se conozca su enunciado.
+**Revisión de cambios:** Ángel y David revisan mutuamente sus cambios; Jorge y Esteban hacen lo mismo. La revisión comprobará funcionalidad, riesgos de seguridad y coherencia entre las afirmaciones y las evidencias. Cada revisor anotará qué ha examinado, qué problema ha detectado o descartado y cómo se ha comprobado. Los cambios en contratos compartidos requieren revisión de los responsables afectados antes de integrar.
+
+En el **Bloque IV todos participarán en la auditoría de otra aplicación** y aportarán hallazgos o comprobaciones documentadas. El reparto de pruebas y del informe se acordará con su enunciado, buscando que cada integrante aplique y contraste aprendizajes más allá de las pantallas que haya programado.
 
 **Equilibrio de carga:** el reparto es inicial y ajustable. Antes de programar se desglosará cada bloque en tareas y se estimará su esfuerzo según las tecnologías elegidas y el enunciado de la práctica correspondiente. El bloque de Esteban puede crecer al combinar cámara, informes y citas, y el de Ángel depende de la solución de autenticación. Si las estimaciones o el trabajo real muestran diferencias, se trasladarán tareas concretas a quien tenga menor carga; por ejemplo, la agenda de citas podrá reasignarse.
 
