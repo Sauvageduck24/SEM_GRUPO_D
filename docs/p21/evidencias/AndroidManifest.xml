@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:compileSdkVersion="37" android:compileSdkVersionCodename="17" package="com.futsch1.medtimer" platformBuildVersionCode="37" platformBuildVersionName="17">
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:minSdkVersion="29" android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <permission android:name="com.futsch1.medtimer.NOTIFICATION_PROCESSED"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="com.futsch1.medtimer.NOTIFICATION_PROCESSED"/>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <attribution android:label="@string/audio_playback_attribution" android:tag="audioPlayback"/>
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <permission android:name="com.futsch1.medtimer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" android:protectionLevel="signature"/>
+    <uses-permission android:name="com.futsch1.medtimer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"/>
+    <application android:allowBackup="false" android:appComponentFactory="androidx.core.app.CoreComponentFactory" android:dataExtractionRules="@xml/data_extraction_rules" android:enableOnBackInvokedCallback="true" android:extractNativeLibs="false" android:fullBackupContent="@xml/backup_rules" android:hardwareAccelerated="true" android:icon="@mipmap/logo" android:label="@string/app_name" android:localeConfig="@xml/_generated_res_locale_config" android:logo="@mipmap/logo" android:name="com.futsch1.medtimer.MedTimerApplication" android:roundIcon="@mipmap/logo_round" android:supportsRtl="true" android:theme="@style/Theme.MedTimer" android:usesCleartextTraffic="false">
+        <activity android:configChanges="locale|layoutDirection" android:exported="true" android:launchMode="singleInstance" android:name="com.futsch1.medtimer.MainActivity" android:theme="@style/Theme.MedTimer" android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name="com.futsch1.medtimer.MedTimerAppIntro" android:theme="@style/Theme.MedTimer"/>
+        <receiver android:enabled="true" android:exported="false" android:name="com.futsch1.medtimer.Autostart" android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:enabled="true" android:exported="false" android:name="com.futsch1.medtimer.TimeChangeReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <provider android:authorities="com.futsch1.medtimer.fileprovider" android:exported="false" android:grantUriPermissions="true" android:name="androidx.core.content.FileProvider">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
+        </provider>
+        <service android:enabled="true" android:exported="false" android:name="com.futsch1.medtimer.feature.reminders.ReminderSchedulerService"/>
+        <activity android:exported="false" android:launchMode="singleInstance" android:name="com.futsch1.medtimer.feature.reminders.alarm.ReminderAlarmActivity" android:showOnLockScreen="true" android:turnScreenOn="true"/>
+        <receiver android:enabled="true" android:exported="false" android:name="com.futsch1.medtimer.feature.reminders.ReminderProcessorBroadcastReceiver" android:permission="com.futsch1.medtimer.NOTIFICATION_PROCESSED"/>
+        <receiver android:exported="false" android:label="@string/next_reminders" android:name="com.futsch1.medtimer.feature.reminders.widgets.NextRemindersWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/next_reminders_widget_info"/>
+        </receiver>
+        <receiver android:exported="false" android:label="@string/recent_events" android:name="com.futsch1.medtimer.feature.reminders.widgets.LatestRemindersWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/latest_reminders_widget_info"/>
+        </receiver>
+        <receiver android:exported="false" android:name="com.futsch1.medtimer.feature.reminders.widgets.WidgetUpdateReceiver">
+            <intent-filter>
+                <action android:name="com.futsch1.medtimer.WIDGET_UPDATE"/>
+            </intent-filter>
+        </receiver>
+        <activity android:exported="true" android:name="androidx.compose.ui.tooling.PreviewActivity"/>
+        <receiver android:enabled="true" android:exported="false" android:name="com.futsch1.medtimer.core.location.GeofenceBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.futsch1.medtimer.GEOFENCE_TRANSITION"/>
+            </intent-filter>
+        </receiver>
+        <provider android:authorities="com.futsch1.medtimer.androidx-startup" android:exported="false" android:name="androidx.startup.InitializationProvider">
+            <meta-data android:name="androidx.emoji2.text.EmojiCompatInitializer" android:value="androidx.startup"/>
+            <meta-data android:name="androidx.lifecycle.ProcessLifecycleInitializer" android:value="androidx.startup"/>
+            <meta-data android:name="androidx.profileinstaller.ProfileInstallerInitializer" android:value="androidx.startup"/>
+        </provider>
+        <activity android:exported="false" android:name="com.google.android.gms.common.api.GoogleApiActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+        <uses-library android:name="androidx.window.extensions" android:required="false"/>
+        <uses-library android:name="androidx.window.sidecar" android:required="false"/>
+        <service android:directBootAware="true" android:exported="false" android:name="androidx.room.MultiInstanceInvalidationService"/>
+        <receiver android:directBootAware="false" android:enabled="true" android:exported="true" android:name="androidx.profileinstaller.ProfileInstallReceiver" android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SKIP_FILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION"/>
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

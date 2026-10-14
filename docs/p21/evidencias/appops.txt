@@ -1,0 +1,3 @@
+Uid mode: COARSE_LOCATION: ignore
+FINE_LOCATION: ignore
+POST_NOTIFICATION: ignore
