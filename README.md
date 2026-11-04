@@ -88,3 +88,7 @@ Consultó su ficha de Google Play e instaló el APK del GitHub oficial. El anál
 En el reconocimiento no se identificó un permiso claramente ajeno a las funciones de la app. Se señaló que conviene revisar USE_FINGERPRINT, que está obsoleto, y la presencia de PreviewActivity en la versión publicada. Estas observaciones no demuestran por sí solas una vulnerabilidad.
 
 Los comandos, resultados y capturas están en el [informe de reconocimiento](docs/p21/reconocimiento-david.md).
+
+## P2.2 · Propuesta local de David
+
+Código e inventario preparados para revisión, sin acuerdo nuevo ni publicación. Véanse [estado local](docs/p22/ESTADO_LOCAL.md), [inventario](docs/p22/INVENTARIO_DATOS.md) y [reproducción](docs/p22/REPRODUCIR.md).
