@@ -137,6 +137,20 @@ class Repositorio(
             }
         }
 
+    suspend fun obtenerElemento(id: Int): EstadoUi<RegistroSalud> = withContext(Dispatchers.IO) {
+        val token = sesion.obtenerToken()
+            ?: return@withContext EstadoUi.Error(MotivoError.SesionCaducada)
+        try {
+            EstadoUi.Exito(api.elemento("Bearer $token", id))
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: IOException) {
+            EstadoUi.Error(MotivoError.SinConexion)
+        } catch (e: Exception) {
+            EstadoUi.Error(MotivoError.Desconocido)
+        }
+    }
+
     suspend fun obtenerPerfil(): EstadoUi<Perfil> = withContext(Dispatchers.IO) {
         val token = sesion.obtenerToken()
             ?: return@withContext EstadoUi.Error(MotivoError.SesionCaducada)
