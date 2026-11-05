@@ -13,10 +13,8 @@ import kotlinx.coroutines.launch
  * Modelo de vista de la aplicación.
  *
  * Sostiene el estado de las pantallas y lanza el trabajo en viewModelScope, de
- * modo que las corrutinas se cancelan solas cuando la pantalla desaparece
- * (sesión 2.4.5, concurrencia estructurada). Si el usuario sale mientras una
- * descarga está en marcha, esa descarga se cancela: no termina después y
- * escribe datos de la sesión anterior.
+ * modo que se cancelan al destruir el modelo, no al cambiar de ruta.
+ * La carga del detalle se cancela explícitamente al salir o pedir otro detalle.
  *
  * Está completo. En P2.2 sólo hay que leerlo.
  */
@@ -27,6 +25,18 @@ class VistaModelo(private val repositorio: Repositorio) : ViewModel() {
 
     private val _estadoLista = MutableStateFlow<EstadoUi<List<RegistroSalud>>>(EstadoUi.Reposo)
     val estadoLista: StateFlow<EstadoUi<List<RegistroSalud>>> = _estadoLista.asStateFlow()
+
+    private var cargaDetalle: kotlinx.coroutines.Job? = null
+    private val _estadoDetalle = MutableStateFlow<EstadoUi<RegistroSalud>>(EstadoUi.Reposo)
+    val estadoDetalle: StateFlow<EstadoUi<RegistroSalud>> = _estadoDetalle.asStateFlow()
+
+    fun cargarDetalle(id: Int) {
+        cargaDetalle?.cancel()
+        cargaDetalle = viewModelScope.launch {
+            _estadoDetalle.value = EstadoUi.Cargando
+            _estadoDetalle.value = repositorio.obtenerElemento(id)
+        }
+    }
 
     fun entrar(usuario: String, clave: String) {
         viewModelScope.launch {
@@ -54,10 +64,13 @@ class VistaModelo(private val repositorio: Repositorio) : ViewModel() {
      * antes de seguir y compruébala en la sección 5.5.
      */
     fun salir() {
+        cargaDetalle?.cancel()
+        _estadoDetalle.value = EstadoUi.Reposo
         viewModelScope.launch {
             repositorio.cerrarSesion()
             _estadoLogin.value = EstadoUi.Reposo
             _estadoLista.value = EstadoUi.Reposo
+            _estadoDetalle.value = EstadoUi.Reposo
         }
     }
 }
