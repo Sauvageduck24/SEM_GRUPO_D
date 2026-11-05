@@ -4,7 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.foundation.clickable
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,12 +25,22 @@ import es.uma.seguridad.salud.modelo.*
 fun PantallaLista(
     estado: EstadoUi<List<RegistroSalud>>,
     onRecargar: () -> Unit,
-    onSalir: () -> Unit
+    onSalir: () -> Unit,
+    onAbrir: (Int) -> Unit
 ) {
+    val contexto = LocalContext.current
+    val tieneCamara = contexto.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+    var concedido by remember {
+        mutableStateOf(ContextCompat.checkSelfPermission(contexto, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_GRANTED)
+    }
+    val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        concedido = it
+    }
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mi historial de salud") },
+                title = { Text("Mis registros de salud") },
                 actions = {
                     TextButton(onClick = onRecargar) { Text("Recargar") }
                     TextButton(onClick = onSalir) { Text("Salir") }
@@ -31,8 +48,19 @@ fun PantallaLista(
             )
         }
     ) { relleno ->
+        Column(Modifier.fillMaxSize().padding(relleno)) {
+            Button(onClick = { lanzador.launch(Manifest.permission.CAMERA) }, enabled = tieneCamara,
+                modifier = Modifier.padding(horizontal = 16.dp)) {
+                Text(if (concedido) "Permiso concedido" else "Permitir cámara para informes")
+            }
+            if (!concedido) {
+                Text("Sin este permiso no podrás fotografiar tus informes médicos. " +
+                    "El resto de la aplicación sigue funcionando.",
+                    modifier = Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.bodySmall)
+            }
+            if (!tieneCamara) Text("Este dispositivo no tiene cámara.")
         Box(
-            modifier = Modifier.fillMaxSize().padding(relleno),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             when (estado) {
@@ -43,7 +71,7 @@ fun PantallaLista(
                     modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
                     items(estado.datos) { elemento ->
-                        Card(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
+                        Card(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).clickable { onAbrir(elemento.id) }) {
                             Column(Modifier.padding(16.dp)) {
                                 Text(elemento.titulo, style = MaterialTheme.typography.titleMedium)
                                 Spacer(Modifier.height(4.dp))
@@ -57,4 +85,5 @@ fun PantallaLista(
             }
         }
     }
+}
 }

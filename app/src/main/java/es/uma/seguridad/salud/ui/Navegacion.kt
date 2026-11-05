@@ -3,6 +3,10 @@ package es.uma.seguridad.salud.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -19,6 +23,7 @@ import es.uma.seguridad.salud.modelo.EstadoUi
 fun Navegacion(vistaModelo: VistaModelo) {
     val navController = rememberNavController()
     val estadoLogin by vistaModelo.estadoLogin.collectAsState()
+    val estadoDetalle by vistaModelo.estadoDetalle.collectAsState()
     val estadoLista by vistaModelo.estadoLista.collectAsState()
 
     NavHost(navController = navController, startDestination = "login") {
@@ -28,17 +33,21 @@ fun Navegacion(vistaModelo: VistaModelo) {
                 estado = estadoLogin,
                 onEntrar = { usuario, clave -> vistaModelo.entrar(usuario, clave) }
             )
-            if (estadoLogin is EstadoUi.Exito) {
+            LaunchedEffect(estadoLogin) {
+              if (estadoLogin is EstadoUi.Exito) {
                 navController.navigate("lista") {
                     popUpTo("login") { inclusive = true }
                 }
             }
         }
 
+        }
+
         composable("lista") {
             PantallaLista(
                 estado = estadoLista,
                 onRecargar = { vistaModelo.cargarElementos() },
+                onAbrir = { id -> navController.navigate("detalle/$id") },
                 onSalir = {
                     vistaModelo.salir()
                     navController.navigate("login") {
@@ -46,6 +55,16 @@ fun Navegacion(vistaModelo: VistaModelo) {
                     }
                 }
             )
+        }
+        composable(
+            route = "detalle/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType }),
+            deepLinks = listOf(navDeepLink { uriPattern = "appsegura://detalle/{id}" })
+        ) { entrada ->
+            val id = entrada.arguments?.getInt("id") ?: 0
+            PantallaDetalle(id, estadoDetalle,
+                onCargar = vistaModelo::cargarDetalle,
+                onVolver = { navController.popBackStack() })
         }
     }
 }
