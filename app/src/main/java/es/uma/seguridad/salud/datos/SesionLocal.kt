@@ -3,22 +3,38 @@ package es.uma.seguridad.salud.datos
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import javax.crypto.Cipher
 
 /* ==========================================================================
-   LA SESIÓN DEL USUARIO · versión cifrada
-   Teoría: sesión 3.3, diapositivas 6 y 12.
+   LA SESIÓN DEL USUARIO · versión con autenticación
+   Teoría: sesión 3.3, diapositivas 19 y 20.
 
-   SUSTITUYE al fichero del mismo nombre de la práctica P2.2.
+   SUSTITUYE a la versión del paso 1, en el PASO 4 de la práctica.
+   No la copies antes: hasta el paso 4 no tiene sentido.
 
-   Lo importante de esta clase es lo que NO ha cambiado: la interfaz pública
-   es exactamente la misma que antes. guardarSesion, obtenerToken,
-   obtenerUsuario, cerrarSesion y haySesion tienen la misma firma y hacen lo
-   mismo desde fuera.
+   QUÉ CAMBIA Y POR QUÉ
 
-   Por eso ni Repositorio ni VistaModelo ni ninguna pantalla se enteran de que
-   ahora hay criptografía por medio. Es el reparto en capas de la sesión 2.5.4
-   dando su primer dividendo: una decisión de seguridad que se toma en un solo
-   fichero.
+   En el paso 1 la clave no exigía autenticación, así que cifrar y descifrar
+   se podían hacer en el acto, en cualquier momento y desde cualquier hilo.
+   Al añadirle la condición de autenticación, eso deja de ser posible: una
+   operación con esa clave sólo existe si ha pasado antes por el diálogo del
+   sistema, y el diálogo es asíncrono y necesita una pantalla.
+
+   La consecuencia de diseño es ésta: la sesión ya no se lee del disco cada
+   vez que hace falta. Se ABRE una vez, con la huella, y a partir de ahí vive
+   en memoria mientras la aplicación está en marcha.
+
+   Fíjate en el precio: el token descifrado está ahora en la memoria del
+   proceso. Eso es inevitable —hay que usarlo para hablar con el servidor— y
+   es exactamente la cuarta fila de la tabla de la sección 5: lo que sigue sin
+   proteger. El cifrado protege el disco, no el proceso.
+
+   UNA DECISIÓN QUE NOTARÁS: los dos valores se guardan en UN SOLO campo.
+   Cada operación criptográfica exige una autenticación, así que dos campos
+   serían dos huellas. Se empaquetan juntos y se cifran de una vez.
    ========================================================================== */
 
 class SesionLocal(contexto: Context) {
@@ -26,98 +42,145 @@ class SesionLocal(contexto: Context) {
     private val preferencias: SharedPreferences =
         contexto.getSharedPreferences(NOMBRE_FICHERO, Context.MODE_PRIVATE)
 
-    /**
-     * Guarda la sesión, cifrando cada valor antes de escribirlo.
-     *
-     * Fíjate en que el NOMBRE de cada campo sigue estando en claro en el XML.
-     * Eso es deliberado y vale la pena observarlo cuando leas el fichero con
-     * adb: el cifrado protege el contenido, no la estructura. Un adversario
-     * seguirá sabiendo que esta aplicación guarda algo llamado "token".
-     */
-    fun guardarSesion(token: String, usuario: String) {
-        preferencias.edit()
-            .putString(CLAVE_TOKEN, Cripto.cifrar(token))
-            .putString(CLAVE_USUARIO, Cripto.cifrar(usuario))
-            .apply()
+    /** En qué situación está la sesión. La pantalla de desbloqueo la observa. */
+    enum class Estado {
+        /** No hay nada guardado: hay que iniciar sesión. */
+        SIN_SESION,
+
+        /** Se acaba de iniciar sesión y falta confirmar para guardarla cifrada. */
+        PENDIENTE_DE_GUARDAR,
+
+        /** Hay sesión guardada pero todavía no se ha desbloqueado. */
+        BLOQUEADA,
+
+        /** Desbloqueada: el token está en memoria y la aplicación puede trabajar. */
+        ABIERTA
     }
 
-    fun obtenerToken(): String? = leerCifrado(CLAVE_TOKEN)
+    private val _estado = MutableStateFlow(estadoInicial())
+    val estado: StateFlow<Estado> = _estado.asStateFlow()
 
-    fun obtenerUsuario(): String? = leerCifrado(CLAVE_USUARIO)
+    private var tokenEnMemoria: String? = null
+    private var usuarioEnMemoria: String? = null
+
+    private fun estadoInicial(): Estado =
+        if (preferencias.contains(CLAVE_DATOS)) Estado.BLOQUEADA else Estado.SIN_SESION
+
+    /* ----------------------------------------------------------------------
+       LO QUE VE EL RESTO DE LA APLICACIÓN
+
+       Estas cuatro funciones tienen la misma firma que en P2.2 y en el paso 1.
+       Repositorio y VistaModelo siguen sin enterarse de nada.
+       ---------------------------------------------------------------------- */
 
     /**
-     * Lee un campo y lo descifra.
+     * Guarda la sesión... a medias, y a propósito.
      *
-     * EL CAMINO QUE NO ES FELIZ, y es la mitad del trabajo de esta práctica.
+     * No puede escribir en disco todavía, porque cifrar exige autenticación y
+     * esta función se llama desde una corrutina del repositorio, sin pantalla
+     * a la vista. Lo que hace es dejar los valores en memoria —con lo cual la
+     * aplicación ya funciona— y marcar que falta persistirlos.
      *
-     * Descifrar puede fallar, y no por un error de programación:
-     *
-     *   - KeyPermanentlyInvalidatedException: alguien ha registrado una huella
-     *     nueva en el terminal, o ha quitado el bloqueo de pantalla. El
-     *     sistema ha destruido la clave a propósito, que es justo lo que le
-     *     pedimos al crearla.
-     *   - AEADBadTagException: el texto cifrado no es el que se guardó.
-     *
-     * En los dos casos los datos son IRRECUPERABLES. No hay nada que
-     * reintentar y no hay nada que reparar: lo único honesto es descartarlos y
-     * obligar a iniciar sesión otra vez.
-     *
-     * Lo que NO se debe hacer aquí es capturar la excepción y devolver el
-     * valor sin cifrar, ni dejar el catch vacío. Es la tercera prohibición de
-     * la diapositiva 21: un try/catch silencioso convierte un fallo de
-     * seguridad en una aplicación que parece funcionar.
+     * La pantalla de desbloqueo verá ese estado y pedirá la huella.
      */
-    private fun leerCifrado(clave: String): String? {
-        val paquete = preferencias.getString(clave, null) ?: return null
+    fun guardarSesion(token: String, usuario: String) {
+        tokenEnMemoria = token
+        usuarioEnMemoria = usuario
+        _estado.value = Estado.PENDIENTE_DE_GUARDAR
+    }
+
+    fun obtenerToken(): String? = tokenEnMemoria
+
+    fun obtenerUsuario(): String? = usuarioEnMemoria
+
+    fun haySesion(): Boolean = tokenEnMemoria != null
+
+    fun cerrarSesion() {
+        tokenEnMemoria = null
+        usuarioEnMemoria = null
+        preferencias.edit().clear().apply()
+        _estado.value = Estado.SIN_SESION
+    }
+
+    /* ----------------------------------------------------------------------
+       LO QUE USA LA PANTALLA DE DESBLOQUEO
+
+       Aquí está la idea de la diapositiva 20. El cifrador NO se usa en estas
+       funciones: se crea, se le entrega al diálogo del sistema, y vuelve
+       utilizable sólo si la autenticación salió bien. Quien impone la
+       condición es el hardware, no este código.
+       ---------------------------------------------------------------------- */
+
+    /** Cifrador para persistir la sesión recién iniciada. Va al diálogo. */
+    fun cifradorParaGuardar(): Cipher = Cripto.cifradorParaCifrar()
+
+    /** Cifrador para abrir la sesión guardada. Va al diálogo. */
+    fun cifradorParaAbrir(): Cipher =
+        Cripto.cifradorParaDescifrar(preferencias.getString(CLAVE_DATOS, null)!!)
+
+    /**
+     * Termina de guardar, con el cifrador que devuelve el diálogo.
+     *
+     * Es importante que sea ESE cifrador y no uno nuevo: el que sale del
+     * diálogo es el único que el sistema ha habilitado.
+     */
+    fun completarGuardado(cifrador: Cipher) {
+        val token = tokenEnMemoria ?: return
+        val usuario = usuarioEnMemoria ?: ""
+        val paquete = Cripto.empaquetar(cifrador, "$token$SEPARADOR_CAMPOS$usuario")
+        preferencias.edit().putString(CLAVE_DATOS, paquete).apply()
+        _estado.value = Estado.ABIERTA
+    }
+
+    /**
+     * Termina de abrir, con el cifrador que devuelve el diálogo.
+     *
+     * Devuelve false si los datos ya no se pueden recuperar, y en ese caso los
+     * descarta: no hay nada que reintentar. Es el mismo camino no feliz del
+     * paso 1, ahora con una causa más, que es que la clave se haya invalidado
+     * porque alguien registró una huella nueva.
+     */
+    fun completarApertura(cifrador: Cipher): Boolean {
+        val paquete = preferencias.getString(CLAVE_DATOS, null) ?: return false
         return try {
-            Cripto.descifrar(paquete)
+            val claro = Cripto.desempaquetar(cifrador, paquete)
+            tokenEnMemoria = claro.substringBefore(SEPARADOR_CAMPOS)
+            usuarioEnMemoria = claro.substringAfter(SEPARADOR_CAMPOS)
+            _estado.value = Estado.ABIERTA
+            true
         } catch (e: Exception) {
-            // Se registra QUE ha fallado y de qué tipo. Nunca el contenido.
-            Log.w("SesionLocal", "La sesión guardada ya no se puede descifrar: ${e.javaClass.simpleName}")
+            Log.w("SesionLocal", "Sesión irrecuperable: ${e.javaClass.simpleName}")
             descartarSesionIrrecuperable()
-            null
+            false
         }
     }
 
     /**
-     * Tira la sesión cifrada y la clave que la protegía.
+     * Cuando la clave ya no sirve.
      *
-     * Hay que borrar las dos cosas. Si se borran las preferencias y se deja la
-     * clave vieja, el siguiente inicio de sesión cifrará con una clave que
-     * quizá ya esté invalidada y el problema vuelve en el arranque siguiente.
+     * Se borran las dos cosas: los datos cifrados, que son ilegibles para
+     * siempre, y la clave, que puede estar invalidada. Si se dejara la clave,
+     * el siguiente inicio de sesión fallaría igual en el arranque siguiente.
      */
-    private fun descartarSesionIrrecuperable() {
+    fun descartarSesionIrrecuperable() {
+        tokenEnMemoria = null
+        usuarioEnMemoria = null
         preferencias.edit().clear().apply()
         try {
             Cripto.borrarClave()
         } catch (e: Exception) {
             Log.w("SesionLocal", "No se ha podido borrar la clave: ${e.javaClass.simpleName}")
         }
+        _estado.value = Estado.SIN_SESION
     }
-
-    /**
-     * Cierra la sesión.
-     *
-     * La clave se queda: no se ha invalidado nada, simplemente este usuario se
-     * ha ido. La siguiente sesión se cifrará con la misma.
-     */
-    fun cerrarSesion() {
-        preferencias.edit().clear().apply()
-    }
-
-    /**
-     * Si hay sesión.
-     *
-     * Ojo a una diferencia con P2.2: esto ya no es una consulta gratis. Mirar
-     * si hay token obliga a descifrarlo, y por tanto puede disparar el camino
-     * de error de arriba. Es el primer sitio donde se nota que cifrar tiene un
-     * precio que hay que pagar en algún momento.
-     */
-    fun haySesion(): Boolean = obtenerToken() != null
 
     companion object {
         const val NOMBRE_FICHERO = "sesion"
-        const val CLAVE_TOKEN = "token"
-        const val CLAVE_USUARIO = "usuario"
+
+        /** Un único campo: una operación criptográfica, una autenticación. */
+        const val CLAVE_DATOS = "datos"
+
+        /** Separa el token del usuario dentro del paquete cifrado. */
+        private const val SEPARADOR_CAMPOS = "\u0000"
     }
 }

@@ -38,6 +38,8 @@ class VistaModelo(private val repositorio: Repositorio) : ViewModel() {
         }
     }
 
+    fun haySesion(): Boolean = repositorio.haySesion()
+
     fun entrar(usuario: String, clave: String) {
         viewModelScope.launch {
             _estadoLogin.value = EstadoUi.Cargando

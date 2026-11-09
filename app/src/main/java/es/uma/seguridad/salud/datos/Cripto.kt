@@ -67,6 +67,8 @@ object Cripto {
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(256)
+                .setUserAuthenticationRequired(true)
+                .setInvalidatedByBiometricEnrollment(true)
                 // ------------------------------------------------------------
                 // PASO 4 DE LA PRÁCTICA: aquí se añaden las dos condiciones de
                 // autenticación. Hasta entonces la clave no las lleva, y por

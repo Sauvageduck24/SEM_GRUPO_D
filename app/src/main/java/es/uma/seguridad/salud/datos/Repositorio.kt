@@ -77,6 +77,8 @@ class Repositorio(
                  * devuelve e.message a la interfaz. Esos mensajes llevan rutas,
                  * consultas y direcciones de servidor.
                  */
+                Log.w("Repositorio", "Fallo: ${e.javaClass.simpleName}: ${e.message}" +
+                    " / causa: ${e.cause?.javaClass?.simpleName}: ${e.cause?.message}")
                 EstadoUi.Error(MotivoError.Desconocido)
             }
         }
@@ -179,4 +181,7 @@ class Repositorio(
             sesion.cerrarSesion()
         }
     }
+
+    /** P3.1: si la sesión ya está abierta en memoria (tras la huella). */
+    fun haySesion(): Boolean = sesion.haySesion()
 }
