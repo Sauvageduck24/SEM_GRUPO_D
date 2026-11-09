@@ -3,6 +3,7 @@ package es.uma.seguridad.salud
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import es.uma.seguridad.salud.datos.Repositorio
+import es.uma.seguridad.salud.datos.SesionLocal
 import es.uma.seguridad.salud.modelo.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,10 @@ import kotlinx.coroutines.launch
  *
  * Está completo. En P2.2 sólo hay que leerlo.
  */
-class VistaModelo(private val repositorio: Repositorio) : ViewModel() {
+class VistaModelo(
+    private val repositorio: Repositorio,
+    val sesion: SesionLocal // P3.1: la misma que usa el repositorio, para la puerta biométrica
+) : ViewModel() {
 
     private val _estadoLogin = MutableStateFlow<EstadoUi<RespuestaLogin>>(EstadoUi.Reposo)
     val estadoLogin: StateFlow<EstadoUi<RespuestaLogin>> = _estadoLogin.asStateFlow()

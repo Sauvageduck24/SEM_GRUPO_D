@@ -1,5 +1,6 @@
 package es.uma.seguridad.salud
 
+import android.content.Context
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
@@ -50,21 +51,15 @@ class MainActivity : FragmentActivity() {
             WindowManager.LayoutParams.FLAG_SECURE
         )
 
-        // CAMBIO 2: una sola instancia, compartida por el repositorio y la puerta
-        val sesion = SesionLocal(applicationContext)
-
-        val repositorio = Repositorio(
-            api = ClienteRed.crear(),
-            sesion = sesion,
-            dao = BaseDatos.obtener(applicationContext).elementoDao()
-        )
-
         setContent {
             AppSaludTheme {
-                val vistaModelo: VistaModelo = viewModel(factory = FabricaVistaModelo(repositorio))
+                // CAMBIO 2: una sola instancia, compartida por el repositorio y la puerta.
+                // P3.1: la crea la fábrica y vive en el VistaModelo, así que es la
+                // misma aunque la actividad se recree al girar la pantalla.
+                val vistaModelo: VistaModelo = viewModel(factory = FabricaVistaModelo(applicationContext))
 
                 // CAMBIO 3: la navegación sólo se compone si la sesión está abierta
-                PuertaBiometrica(actividad = this@MainActivity, sesion = sesion) {
+                PuertaBiometrica(actividad = this@MainActivity, sesion = vistaModelo.sesion) {
                     Navegacion(vistaModelo)
                 }
             }
@@ -72,8 +67,15 @@ class MainActivity : FragmentActivity() {
     }
 }
 
-class FabricaVistaModelo(private val repositorio: Repositorio) : ViewModelProvider.Factory {
+class FabricaVistaModelo(private val contexto: Context) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        VistaModelo(repositorio) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val sesion = SesionLocal(contexto)
+        val repositorio = Repositorio(
+            api = ClienteRed.crear(),
+            sesion = sesion,
+            dao = BaseDatos.obtener(contexto).elementoDao()
+        )
+        return VistaModelo(repositorio, sesion) as T
+    }
 }
