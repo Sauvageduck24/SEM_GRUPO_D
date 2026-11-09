@@ -12,8 +12,7 @@ import javax.crypto.Cipher
    LA SESIÓN DEL USUARIO · versión con autenticación
    Teoría: sesión 3.3, diapositivas 19 y 20.
 
-   SUSTITUYE a la versión del paso 1, en el PASO 4 de la práctica.
-   No la copies antes: hasta el paso 4 no tiene sentido.
+   Sustituye a la versión del paso 1 desde el paso 4 de la práctica.
 
    QUÉ CAMBIA Y POR QUÉ
 

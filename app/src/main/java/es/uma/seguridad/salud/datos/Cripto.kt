@@ -67,13 +67,11 @@ object Cripto {
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(256)
+                // P3.1 (paso 4): cada operación con la clave exige autenticar
+                // al usuario, y la clave se invalida si se registra una huella
+                // nueva. Lo hace cumplir el almacén del sistema, no este código.
                 .setUserAuthenticationRequired(true)
                 .setInvalidatedByBiometricEnrollment(true)
-                // ------------------------------------------------------------
-                // PASO 4 DE LA PRÁCTICA: aquí se añaden las dos condiciones de
-                // autenticación. Hasta entonces la clave no las lleva, y por
-                // eso los pasos 1 a 3 funcionan sin pedir la huella.
-                // ------------------------------------------------------------
                 .build()
         )
         return generador.generateKey()
@@ -152,16 +150,4 @@ object Cripto {
         val cifrado = Base64.decode(paquete.substringAfter(SEPARADOR), Base64.NO_WRAP)
         return String(cifrador.doFinal(cifrado), Charsets.UTF_8)
     }
-
-    /* ----------------------------------------------------------------------
-       ATAJOS PARA LOS PASOS 1 A 3
-
-       Mientras la clave no exige autenticación, el cifrador se puede crear y
-       usar en la misma línea. En el paso 4 dejan de valer, y la práctica te
-       explica por qué.
-       ---------------------------------------------------------------------- */
-
-    fun cifrar(texto: String): String = empaquetar(cifradorParaCifrar(), texto)
-
-    fun descifrar(paquete: String): String = desempaquetar(cifradorParaDescifrar(paquete), paquete)
 }

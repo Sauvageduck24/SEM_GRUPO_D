@@ -16,11 +16,7 @@ import es.uma.seguridad.salud.ui.theme.AppSaludTheme
 /* ==========================================================================
    PUNTO DE ENTRADA · versión del paso 4
 
-   SUSTITUYE al MainActivity.kt de la práctica P2.2.
-   No lo copies antes del paso 4: necesita ficheros que hasta entonces no
-   existen y no compilaría.
-
-   TRES COSAS CAMBIAN, Y CONVIENE SABER CUÁLES ANTES DE PEGAR
+   Sustituye al MainActivity.kt de la práctica P2.2. Tres cosas cambian:
 
    1. La actividad ya no es ComponentActivity sino FragmentActivity.
       Lo exige el diálogo biométrico, que se apoya en el gestor de fragmentos
@@ -28,13 +24,13 @@ import es.uma.seguridad.salud.ui.theme.AppSaludTheme
       actividad mientras el dedo está en el sensor. FragmentActivity hereda de
       ComponentActivity, así que todo lo demás sigue valiendo igual.
 
-   2. La sesión se saca a una variable propia.
-      Antes se construía dentro de la llamada a Repositorio y nadie más la
-      veía. Ahora la necesitan dos sitios: el repositorio, para trabajar, y la
-      puerta biométrica, para abrirla y cerrarla. Tiene que ser LA MISMA
-      instancia en los dos: si se construyeran dos, cada una tendría su propia
-      copia del token en memoria y la aplicación se comportaría de forma
-      incomprensible.
+   2. La sesión la comparten el repositorio y la puerta.
+      El repositorio la usa para trabajar y la puerta biométrica para abrirla
+      y cerrarla. Tiene que ser LA MISMA instancia en los dos: si hubiera dos,
+      cada una tendría su propia copia del token en memoria. Por eso la crea
+      FabricaVistaModelo y vive en el VistaModelo, que sobrevive a que la
+      actividad se recree al girar la pantalla; si se creara en onCreate,
+      cada giro dejaría a la puerta con una sesión distinta.
 
    3. La navegación va envuelta en la puerta.
       Mientras la sesión guardada esté bloqueada, PuertaBiometrica no compone
@@ -53,9 +49,7 @@ class MainActivity : FragmentActivity() {
 
         setContent {
             AppSaludTheme {
-                // CAMBIO 2: una sola instancia, compartida por el repositorio y la puerta.
-                // P3.1: la crea la fábrica y vive en el VistaModelo, así que es la
-                // misma aunque la actividad se recree al girar la pantalla.
+                // CAMBIO 2: una sola sesión, la del VistaModelo, para el repositorio y la puerta
                 val vistaModelo: VistaModelo = viewModel(factory = FabricaVistaModelo(applicationContext))
 
                 // CAMBIO 3: la navegación sólo se compone si la sesión está abierta

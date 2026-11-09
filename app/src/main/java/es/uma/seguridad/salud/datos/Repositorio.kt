@@ -77,8 +77,9 @@ class Repositorio(
                  * devuelve e.message a la interfaz. Esos mensajes llevan rutas,
                  * consultas y direcciones de servidor.
                  */
-                Log.w("Repositorio", "Fallo: ${e.javaClass.simpleName}: ${e.message}" +
-                    " / causa: ${e.cause?.javaClass?.simpleName}: ${e.cause?.message}")
+                // Solo el tipo del error y de su causa: el mensaje podría llevar datos.
+                Log.w("Repositorio", "Fallo: ${e.javaClass.simpleName}" +
+                    " / causa: ${e.cause?.javaClass?.simpleName}")
                 EstadoUi.Error(MotivoError.Desconocido)
             }
         }
