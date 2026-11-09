@@ -48,12 +48,10 @@ class Repositorio(
                    Nadie ha escrito «imprime el token»: han escrito «imprime
                    el objeto». El resultado es el mismo.
 
-                   En la sección 5.1 lo verás en logcat. Después prueba a
-                   comentar esta línea, vuelve a ejecutar y comprueba que el
-                   token desaparece: así demuestras la causa en lugar de
-                   suponerla.
+                   P3.1 (paso 2a): ya no se imprime el objeto, solo que el
+                   acceso ha ido bien. El token desaparece del registro.
                    ---------------------------------------------------------- */
-                Log.d("Repositorio", "Login correcto: $respuesta")
+                Log.d("Repositorio", "Login correcto")
 
                 sesion.guardarSesion(respuesta.token, respuesta.usuario)
                 EstadoUi.Exito(respuesta)

@@ -77,8 +77,10 @@ object ClienteRed {
          * ¿Quién podría leer esos registros, y con qué privilegios? Se retoma
          * en la sesión 3.6.
          */
+        // P3.1 (paso 2c): BASIC solo muestra método, URL, código y tamaño.
+        // Ni cabeceras (Authorization) ni cuerpos (contraseña, token, datos).
         val registro = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.BASIC
         }
 
         /*
