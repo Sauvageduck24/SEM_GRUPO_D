@@ -26,7 +26,12 @@ fun Navegacion(vistaModelo: VistaModelo) {
     val estadoDetalle by vistaModelo.estadoDetalle.collectAsState()
     val estadoLista by vistaModelo.estadoLista.collectAsState()
 
-    NavHost(navController = navController, startDestination = "login") {
+    // P3.1: la puerta biométrica solo compone esto con la sesión abierta o sin
+    // sesión. Si ya está abierta (se acaba de desbloquear), se va al listado
+    // en lugar de volver a pedir usuario y contraseña.
+    val inicio = if (vistaModelo.haySesion()) "lista" else "login"
+
+    NavHost(navController = navController, startDestination = inicio) {
 
         composable("login") {
             PantallaLogin(
