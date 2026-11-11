@@ -6,12 +6,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.foundation.clickable
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,15 +22,6 @@ fun PantallaLista(
     onSalir: () -> Unit,
     onAbrir: (Int) -> Unit
 ) {
-    val contexto = LocalContext.current
-    val tieneCamara = contexto.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
-    var concedido by remember {
-        mutableStateOf(ContextCompat.checkSelfPermission(contexto, Manifest.permission.CAMERA)
-            == PackageManager.PERMISSION_GRANTED)
-    }
-    val lanzador = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-        concedido = it
-    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,16 +34,9 @@ fun PantallaLista(
         }
     ) { relleno ->
         Column(Modifier.fillMaxSize().padding(relleno)) {
-            Button(onClick = { lanzador.launch(Manifest.permission.CAMERA) }, enabled = tieneCamara,
-                modifier = Modifier.padding(horizontal = 16.dp)) {
-                Text(if (concedido) "Permiso concedido" else "Permitir cámara para informes")
+            Column(Modifier.padding(horizontal = 16.dp)) {
+                PermisoCamaraInformes()
             }
-            if (!concedido) {
-                Text("Sin este permiso no podrás fotografiar tus informes médicos. " +
-                    "El resto de la aplicación sigue funcionando.",
-                    modifier = Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.bodySmall)
-            }
-            if (!tieneCamara) Text("Este dispositivo no tiene cámara.")
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
