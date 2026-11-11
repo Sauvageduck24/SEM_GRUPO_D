@@ -1,0 +1,26 @@
+[
+  {
+    "archivo": "app/src/main/java/es/uma/seguridad/salud/ui/PermisoCamaraInformes.kt",
+    "sha256": "bdbcf8af2ed2f4a0e5e147270c66eed4e5cde2b52f197911ba3685193737f504"
+  },
+  {
+    "archivo": "app/src/main/java/es/uma/seguridad/salud/ui/PantallaLista.kt",
+    "sha256": "ada0e889292d0e6d94dacb6e46cac6225ce77425f87aa8d7ca300bcabde4765c"
+  },
+  {
+    "archivo": "app/src/androidTest/java/es/uma/seguridad/salud/PermisoCamaraInformesTest.kt",
+    "sha256": "8b67bb544a1dd6e941be76ded8f699df0ba0b5f86d6b89c0cb3463dae723237c"
+  },
+  {
+    "archivo": "app/build.gradle.kts",
+    "sha256": "a6cc13be44ab3f27dff41670bdb92ec134e48dcef14d132fffde0834ac0e1e12"
+  },
+  {
+    "archivo": "gradle/libs.versions.toml",
+    "sha256": "3c77f48a5291d8ea1299f5fd8eac63828dbf17e534cd7a600ce779c4032257ab"
+  },
+  {
+    "archivo": "laboratorio/probar-camara.ps1",
+    "sha256": "d0f1e2bcc80c4d51d8061371c8bc538a0b8832c35425d7b95c18caa246faf7ba"
+  }
+]

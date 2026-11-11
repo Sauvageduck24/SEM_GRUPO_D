@@ -1,0 +1,25 @@
+Prueba real en MainActivity; listado con fixture local, sin backend ni autenticación.
+CAMERA concedido: false
+Ventana: com.android.settings
+AppSalud
+Archive
+Uninstall
+Force stop
+Notifications
+Off
+Permissions
+No permissions granted
+Storage & cache
+17.28 MB used in internal storage
+Mobile data usage
+No data used
+Screen time
+Less than 1 minute today
+App battery usage
+No battery use since last full charge
+Open by default
+Allow app to open supported links
+Unused app settings
+Manage app if unused
+Remove permissions, delete temporary files, stop notifications, and archive the app
+App info

@@ -1,0 +1,4 @@
+Prueba real en MainActivity; listado con fixture local, sin backend ni autenticación.
+CAMERA concedido: true
+Ventana: es.uma.seguridad.salud
+Este dispositivo no tiene cámara. Puedes consultar tus registros.

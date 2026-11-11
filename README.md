@@ -27,6 +27,14 @@ Para abrir un registro desde fuera de la app se puede lanzar `adb shell am start
 - [Documento de alcance del Bloque II](docs/ALCANCE.md), con la aplicación, los datos, la superficie expuesta, el modelo de amenazas y el reparto.
 - [Inventario de datos sensibles de la P2.2](docs/p22/INVENTARIO_DATOS.md), con más detalle sobre dónde queda cada dato.
 - [Reconocimiento de MedTimer de la P2.1](docs/p21/reconocimiento-david.md).
+- [Seguimiento de Esteban: revisión de P2.1–P2.3 y aportación P3.1](docs/esteban/SEGUIMIENTO_PRACTICAS.md).
+- [P3.1 de Esteban: permiso de cámara, informes y límites de almacenamiento](docs/p31/ESTEBAN_CAMARA_INFORMES.md).
+
+### Aportación de Esteban · cámara e informes
+
+En `feature/esteban-p31-camara-informes` se comprueba el permiso al volver de Ajustes y se ofrece abrirlos cuando Android deja de mostrar la solicitud. Denegar CAMERA mantiene el listado utilizable. La captura de informes y la agenda siguen sin implementar; no se afirma que existan fotografías cifradas. Esta rama conserva la base de `main`; la sesión biométrica de Ángel se integra por su propia rama.
+
+Para reproducir las pruebas específicas en Windows, con un emulador conectado y desbloqueado: `./laboratorio/probar-camara.ps1`. Compila e instala los dos APK, prepara únicamente CAMERA de SaludApp, ejecuta las pruebas y restaura su permiso original. Usa un listado ficticio local, sin login ni backend. Los resultados y el alcance de cada comprobación figuran en el seguimiento enlazado arriba.
 
 ## Planificación inicial (P2.1)
 
