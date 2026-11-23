@@ -1,6 +1,7 @@
 package es.uma.seguridad.salud.datos
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import es.uma.seguridad.salud.BuildConfig
 import es.uma.seguridad.salud.modelo.*
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -51,17 +52,17 @@ object ClienteRed {
     /**
      * Dirección del backend.
      *
-     *   Emulador de Android            http://10.0.2.2:8080/
-     *   Dispositivo físico en tu red   http://<IP_de_tu_ordenador>:8080/
+     *   Emulador por defecto              http://10.0.2.2:8080/
+     *   Debug con laboratorioAdbReverse   http://127.0.0.1:8080/
      *
-     * El emulador tiene su propia interfaz de red: dentro de él, localhost es
-     * el propio emulador y no tu ordenador. De ahí el 10.0.2.2.
+     * Con la segunda opción, ADB reenvía el puerto local del dispositivo al
+     * backend del ordenador. Consulta los pasos de laboratorio en el README.
      *
      * PARA EL CUADERNO: esta dirección queda escrita en el artefacto y se
      * recupera decompilándolo, tal como comprobaste en la práctica P2.1.
      * ¿Es eso un problema? ¿Y si en lugar de una dirección fuera una clave?
      */
-    const val BASE_URL = "http://10.0.2.2:8080/"
+    const val BASE_URL = BuildConfig.LAB_BASE_URL
 
     fun crear(): ApiServicio {
 

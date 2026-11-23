@@ -3,6 +3,7 @@ package es.uma.seguridad.salud.datos
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -62,8 +63,16 @@ class SesionLocal(contexto: Context) {
     private var tokenEnMemoria: String? = null
     private var usuarioEnMemoria: String? = null
 
-    private fun estadoInicial(): Estado =
-        if (preferencias.contains(CLAVE_DATOS)) Estado.BLOQUEADA else Estado.SIN_SESION
+    private fun estadoInicial(): Estado {
+        // P2.3 guardaba la sesión en claro. Descártala al abrir la app actualizada.
+        if (preferencias.contains(CLAVE_TOKEN_ANTIGUA) || preferencias.contains(CLAVE_USUARIO_ANTIGUA)) {
+            preferencias.edit {
+                remove(CLAVE_TOKEN_ANTIGUA)
+                remove(CLAVE_USUARIO_ANTIGUA)
+            }
+        }
+        return if (preferencias.contains(CLAVE_DATOS)) Estado.BLOQUEADA else Estado.SIN_SESION
+    }
 
     /* ----------------------------------------------------------------------
        LO QUE VE EL RESTO DE LA APLICACIÓN
@@ -178,6 +187,9 @@ class SesionLocal(contexto: Context) {
 
         /** Un único campo: una operación criptográfica, una autenticación. */
         const val CLAVE_DATOS = "datos"
+
+        private const val CLAVE_TOKEN_ANTIGUA = "token"
+        private const val CLAVE_USUARIO_ANTIGUA = "usuario"
 
         /** Separa el token del usuario dentro del paquete cifrado. */
         private const val SEPARADOR_CAMPOS = "\u0000"
