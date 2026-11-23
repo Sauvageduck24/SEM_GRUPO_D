@@ -1,0 +1,69 @@
+{
+  "apk_sha256": "fc3722436090a00559be0e510f91e5685dfda3e8da1a43be20dbc79b8b92d1e9",
+  "android_api": "37",
+  "version_android": "17",
+  "preferencias": {
+    "campos": [
+      "datos"
+    ],
+    "nonce_bytes": 12,
+    "cifrado_y_etiqueta_bytes": 40,
+    "valores_en_claro": 0
+  },
+  "sqlite": {
+    "archivos": [
+      "appbase.db",
+      "appbase.db-wal",
+      "appbase.db-shm"
+    ],
+    "cabecera_legible": true,
+    "filas_antes": [
+      [
+        1,
+        "Antecedente de prueba",
+        "2026-11-01",
+        "<cuenta docente>"
+      ],
+      [
+        2,
+        "Consulta de prueba",
+        "2026-11-02",
+        "<cuenta docente>"
+      ]
+    ],
+    "filas_despues": 0
+  },
+  "logcat": {
+    "peticiones": [
+      [
+        "POST",
+        "login"
+      ],
+      [
+        "GET",
+        "elementos"
+      ],
+      [
+        "GET",
+        "elementos/2"
+      ]
+    ],
+    "respuestas": [
+      [
+        "200",
+        "login"
+      ],
+      [
+        "200",
+        "elementos"
+      ],
+      [
+        "200",
+        "elementos/2"
+      ]
+    ],
+    "secretos_encontrados": 0
+  },
+  "actualizacion_mixta": "Se eliminaron los campos antiguos y se conservó el mismo paquete cifrado",
+  "recorrido": "Acceso, confirmación con huella, listado, detalle, reinicio, cancelación, desbloqueo con huella, salida y nuevo arranque verificados"
+}
