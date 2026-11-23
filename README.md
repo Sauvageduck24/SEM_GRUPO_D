@@ -4,30 +4,49 @@ Seguridad en Entornos Móviles · Universidad de Málaga.
 
 Somos JADE Salud, el Grupo D del Supergrupo 1. El equipo está formado por Ángel Gallego Güeto, David López Callejón, Jorge de Torres Suárez y Esteban Sánchez Gámez. Nuestro dominio es Salud: historial médico personal.
 
-## Estado del proyecto · P3.1
+## Estado del proyecto · P3.2
 
 La app permite iniciar sesión, cargar el listado de registros de salud, ver el listado en caché si falla la red y abrir el detalle desde la lista o con `appsegura://detalle/{id}`. Solicita el permiso de cámara desde el listado. La captura y el almacenamiento de fotos de informes están pendientes. `FLAG_SECURE` protege el contenido de la ventana frente a capturas y miniaturas del sistema.
 
-P3.1 cifra el token y el usuario de sesión con AES-256-GCM. La clave reside en Android Keystore y exige huella para guardar o desbloquear la sesión. El cliente registra peticiones en nivel `BASIC`, que omite cabeceras y cuerpos. La caché Room sigue legible, el backend usa HTTP y la autorización por registro queda pendiente. Usar solo datos ficticios del laboratorio.
+La sesión se cifra con AES-256-GCM y una clave de Android Keystore que exige huella al guardar o desbloquear. P3.2 bloquea HTTP y separa la confianza de depuración de la variante de publicación. La publicación configurada usa las CA del sistema y ancla la clave pública del backend y una de reserva. La caché Room sigue legible y la autorización por registro queda pendiente. Usar solo datos ficticios en el laboratorio.
 
 ## Compilar y ejecutar
 
 Hace falta un JDK 25, el Android SDK con la plataforma 37 y un emulador o móvil con Android 8.0 (API 26) o superior. El Wrapper descarga Gradle 9.6.0 por su cuenta.
 
-1. Clonar el repositorio y crear en la raíz un `local.properties` con la ruta del SDK, por ejemplo `sdk.dir=/Users/nombre/Library/Android/sdk`. Android Studio lo crea solo al abrir el proyecto.
-2. Compilar con `./gradlew :app:assembleDebug` en macOS o Linux, o con `.\gradlew.bat :app:assembleDebug` en Windows. El APK queda en `app/build/outputs/apk/debug/app-debug.apk`.
-3. Descargar el backend común de la asignatura del Campus Virtual («Material común backend y proyecto base») y arrancarlo con nuestros datos ficticios de salud mediante `python3 laboratorio/backend_salud.py /ruta/al/backend/servidor.py`. Escucha en `127.0.0.1:8080` y no necesita bibliotecas externas.
-4. Instalar el APK con `adb install -r app/build/outputs/apk/debug/app-debug.apk`. La compilación por defecto se conecta al ordenador desde el emulador por `http://10.0.2.2:8080/`. En Android 17 (API 37) o en un dispositivo físico conectado por ADB, compilar con `:app:assembleDebug -PlaboratorioAdbReverse=true` y ejecutar `adb reverse tcp:8080 tcp:8080` antes de abrir la app. Esa compilación de depuración se conecta por `http://127.0.0.1:8080/` al backend del ordenador a través de ADB.
-5. Configurar bloqueo de pantalla y registrar una huella en el dispositivo. Entrar con una cuenta de prueba del backend, por ejemplo `ana` con la contraseña `Practica2024`. Pulsar **Confirmar**, autenticar la huella y tocar **Recargar**. En un emulador con la huella de prueba registrada se puede simular con `adb emu finger touch 1`.
+1. Abrir el proyecto en Android Studio para configurar el SDK local. Obtener el backend común del Campus Virtual y generar `ca.pem`, `cert.pem` y `clave.pem` con `generar_certificado.sh` del material de P3.2. El certificado del servidor debe incluir `127.0.0.1` en el SAN para la URL por defecto.
+2. Arrancar el backend docente con los datos ficticios de AppSalud. En PowerShell, adaptar las tres rutas de ejemplo a la ubicación del material:
+
+   ```powershell
+   $env:PUERTO = '8443'
+   $env:CERT = (Resolve-Path 'C:\ruta\cert.pem').Path
+   $env:CLAVE = (Resolve-Path 'C:\ruta\clave.pem').Path
+   python laboratorio/backend_salud.py 'C:\ruta\servidor.py'
+   ```
+
+3. Desde otra terminal, compilar e instalar la variante de depuración. En macOS o Linux se usa `./gradlew` en lugar de `.\gradlew.bat`.
+
+   ```powershell
+   .\gradlew.bat :app:assembleDebug '-Pp32LabCa=C:\ruta\ca.pem'
+   adb reverse tcp:8443 tcp:8443
+   adb install -r app/build/outputs/apk/debug/app-debug.apk
+   ```
+
+4. Configurar bloqueo de pantalla y registrar una huella. Entrar con una cuenta docente, por ejemplo `ana` con la contraseña `Practica2024`, pulsar **Confirmar**, autenticar con huella y tocar **Recargar**. En un emulador con la huella de prueba registrada se puede simular con `adb emu finger touch 1`.
 
 Tras actualizar desde P2.3, la aplicación elimina los campos de sesión antiguos en claro y pide iniciar sesión de nuevo si todavía no hay una sesión cifrada.
 
 Para abrir un registro desde fuera de la app se puede lanzar `adb shell am start -a android.intent.action.VIEW -d "appsegura://detalle/2" es.uma.seguridad.salud`. Las pruebas instrumentales se ejecutan con `./gradlew :app:connectedDebugAndroidTest` y un emulador conectado.
 
+La variante `debug` usa `https://127.0.0.1:8443/` por defecto. `p32LabUrl` permite cambiarla por otra URL HTTPS cuyo host esté en el certificado. `p32LabCa` recibe solo el certificado público de la CA. Los ficheros de claves privadas se usan exclusivamente en el servidor.
+
+Para compilar `release` con un backend, indicar juntos `p32ReleaseUrl`, `p32ReleasePinActual`, `p32ReleasePinReserva` y `p32ReleasePinCaducidad` (fecha `AAAA-MM-DD`). Los dos pines son SHA-256 de las claves públicas en formato SPKI y Base64. La compilación sin esas propiedades usa el dominio reservado `appsalud.invalid` y sirve para inspeccionar el artefacto sin servidor configurado. La [verificación de P3.2](docs/p32/VERIFICACION.md) explica cómo probar el anclaje con certificados del laboratorio.
+
 ## Documentación
 
-- [Diseño de seguridad del Bloque III](docs/DISENO_SEGURIDAD.md), con el apartado de datos en reposo y los de P3.2 y P3.3 esbozados.
-- [Inventario de datos sensibles actualizado en P3.1](docs/p22/INVENTARIO_DATOS.md).
+- [Diseño de seguridad del Bloque III](docs/DISENO_SEGURIDAD.md), con los datos en reposo y en tránsito y el apartado de P3.3 esbozado.
+- [Inventario de datos sensibles actualizado en P3.2](docs/p22/INVENTARIO_DATOS.md).
+- [Verificación grupal de P3.2](docs/p32/VERIFICACION.md).
 - [Verificación grupal de P3.1](docs/p31/VERIFICACION.md).
 - [Documento de alcance del Bloque II](docs/ALCANCE.md), como referencia histórica.
 - [Reconocimiento de MedTimer de la P2.1](docs/p21/reconocimiento-david.md).
@@ -36,7 +55,7 @@ Para abrir un registro desde fuera de la app se puede lanzar `adb shell am start
 
 ### Aportación de Esteban · cámara e informes
 
-En `feature/esteban-p31-camara-informes` se comprueba el permiso al volver de Ajustes y se ofrece abrirlos cuando Android deja de mostrar la solicitud. Denegar CAMERA mantiene el listado utilizable. La captura de informes y la agenda siguen sin implementar; no se afirma que existan fotografías cifradas. Esta rama conserva la base de `main`; la sesión biométrica de Ángel se integra por su propia rama.
+El listado comprueba el permiso al volver de Ajustes y ofrece abrirlos cuando Android deja de mostrar la solicitud. Denegar `CAMERA` mantiene el listado utilizable. La captura de informes y la agenda siguen pendientes. La mejora del permiso y el cifrado de sesión están integrados en la base de P3.1. [Aportación de Esteban en la PR #7](https://github.com/Sauvageduck24/SEM_GRUPO_D/pull/7)
 
 Para reproducir las pruebas específicas en Windows, con un emulador conectado y desbloqueado: `./laboratorio/probar-camara.ps1`. Compila e instala los dos APK, prepara únicamente CAMERA de SaludApp, ejecuta las pruebas y restaura su permiso original. Usa un listado ficticio local, sin login ni backend. Los resultados y el alcance de cada comprobación figuran en el seguimiento enlazado arriba.
 
