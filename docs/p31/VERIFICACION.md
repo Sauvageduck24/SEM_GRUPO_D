@@ -16,7 +16,7 @@ Gradle completó `assembleDebug`, `lintDebug` y `testDebugUnitTest`. Lint regist
 
 ## Reproducir el recorrido
 
-1. Arrancar el backend y preparar un emulador con PIN y una huella de prueba según el [README](../../README.md). Los siguientes comandos son para PowerShell con el SDK instalado, el JDK 25 seleccionado y un único dispositivo ADB conectado.
+1. Usar el [código de P3.1](https://github.com/Sauvageduck24/SEM_GRUPO_D/tree/fc641dab75efb7bee70fcac17e8e3d65575ad96f) y arrancar el backend por HTTP según el README de esa revisión. Preparar un emulador con PIN y una huella de prueba. Los siguientes comandos son para PowerShell con el SDK instalado, el JDK 25 seleccionado y un único dispositivo ADB conectado.
 
    ```powershell
    .\gradlew.bat :app:assembleDebug :app:lintDebug :app:testDebugUnitTest -PlaboratorioAdbReverse=true

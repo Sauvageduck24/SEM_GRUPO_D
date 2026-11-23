@@ -1,0 +1,145 @@
+{
+  "fecha": "2026-11-23",
+  "android_api": 37,
+  "base_main": "631d55e74d3146be20e89970c6222f18be7cc7c4",
+  "revalidacion_p31": {
+    "commit": "fc641dab75efb7bee70fcac17e8e3d65575ad96f",
+    "apk_sha256": "fc3722436090a00559be0e510f91e5685dfda3e8da1a43be20dbc79b8b92d1e9",
+    "recorrido": "Acceso, confirmación con huella, listado, detalle, reinicio, cancelación, desbloqueo con huella, salida y nuevo arranque verificados"
+  },
+  "certificados_laboratorio": {
+    "validacion_ca_y_host_de_las_tres_hojas": "TLS 1.3 y HTTP 200",
+    "caducidad_pines_prueba": "2027-11-23"
+  },
+  "matriz_android": [
+    {
+      "variante": "debug",
+      "hoja": "actual",
+      "https": "HTTP 200",
+      "permite_http": false,
+      "http": "HTTP en claro rechazado",
+      "depurable": true,
+      "cliente_appsalud": "acceso correcto, 2 registros y detalle 2"
+    },
+    {
+      "variante": "verificacion",
+      "hoja": "actual",
+      "https": "HTTP 200",
+      "permite_http": false,
+      "http": "HTTP en claro rechazado",
+      "depurable": false,
+      "cliente_appsalud": "acceso correcto, 2 registros y detalle 2"
+    },
+    {
+      "variante": "verificacion",
+      "hoja": "reserva",
+      "https": "HTTP 200",
+      "permite_http": false,
+      "http": "HTTP en claro rechazado",
+      "depurable": false,
+      "cliente_appsalud": "acceso correcto, 2 registros y detalle 2"
+    },
+    {
+      "variante": "verificacion",
+      "hoja": "tercera clave",
+      "https": "Pin verification failed",
+      "permite_http": false,
+      "http": "HTTP en claro rechazado",
+      "depurable": false
+    },
+    {
+      "variante": "release",
+      "hoja": "actual",
+      "https": "Trust anchor for certification path not found",
+      "permite_http": false,
+      "http": "HTTP en claro rechazado",
+      "depurable": false
+    }
+  ],
+  "recorridos_por_https": {
+    "debug": {
+      "apk_sha256": "e9f2a6aad44bbc347173d2ed51f73a46accd5d5a82b74a75f96b125526629dc0",
+      "paquete": "es.uma.seguridad.salud",
+      "puerto_backend": 8443,
+      "respuestas_https": [
+        [
+          "200",
+          "login"
+        ],
+        [
+          "200",
+          "elementos"
+        ],
+        [
+          "200",
+          "elementos/2"
+        ]
+      ],
+      "nuevos_login_en_backend": 1,
+      "resultado": "HTTPS aceptado",
+      "recorrido_completo": true
+    },
+    "verificacion": {
+      "apk_sha256": "aee7a711d4906a221be0f30d8f2ba427854cd5fa2541a52b630764bc3fbaa1df",
+      "paquete": "es.uma.seguridad.salud.verificacion",
+      "puerto_backend": 8443,
+      "respuestas_https": [
+        [
+          "200",
+          "login"
+        ],
+        [
+          "200",
+          "elementos"
+        ],
+        [
+          "200",
+          "elementos/2"
+        ]
+      ],
+      "nuevos_login_en_backend": 1,
+      "resultado": "HTTPS aceptado",
+      "recorrido_completo": true
+    }
+  },
+  "inspeccion_apk": {
+    "debug": {
+      "apk_sha256": "e9f2a6aad44bbc347173d2ed51f73a46accd5d5a82b74a75f96b125526629dc0",
+      "xml_compilado": "res/xml/network_security_config.xml",
+      "ca_docente": true,
+      "almacen_usuario": true,
+      "pines": 0
+    },
+    "verificacion": {
+      "apk_sha256": "aee7a711d4906a221be0f30d8f2ba427854cd5fa2541a52b630764bc3fbaa1df",
+      "xml_compilado": "res/8G.xml",
+      "ca_docente": true,
+      "almacen_usuario": false,
+      "pines": 2
+    },
+    "release": {
+      "apk_sha256": "a7fdce462f6c51470119712023c26102cbb12b2725a561cbdd318c7f88918d41",
+      "xml_compilado": "res/8G.xml",
+      "ca_docente": false,
+      "almacen_usuario": false,
+      "pines": 2,
+      "apk_prueba_firmada_sha256": "abf78b74ae4beda060481add5a81df5d658fbcd5e9efe5880d0c4bbc6d9c8161"
+    }
+  },
+  "compilacion": {
+    "variantes": [
+      "debug",
+      "verificacion",
+      "release",
+      "debugAndroidTest"
+    ],
+    "prueba_unitaria": "correcta",
+    "lint": "0 errors, 26 warnings",
+    "gradle_rechaza_url_http": true,
+    "gradle_rechaza_publicacion_sin_pines": true
+  },
+  "regresion_camara": {
+    "resultado": "3 pruebas instrumentadas y 1 repetida después de revocar CAMERA",
+    "alcance": "MainActivity con listado ficticio local; sin backend, sin login, sin captura de informes"
+  }
+}
