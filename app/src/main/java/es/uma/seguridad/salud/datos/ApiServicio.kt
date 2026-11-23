@@ -14,9 +14,8 @@ import retrofit2.http.*
    EL ACCESO AL BACKEND
    Teoría: sesión 2.5.5 (red) y 2.4.5 (corrutinas).
 
-   AVISO: el backend sirve por HTTP SIN CIFRAR. Es deliberado: en la práctica
-   P3.2 interceptarás este tráfico con un proxy y después aplicarás TLS y
-   anclaje de certificados para ver la diferencia con tus propios ojos.
+   La URL y la política de confianza se configuran al compilar la variante.
+   Android aplica la política de red a la conexión HTTPS.
    ========================================================================== */
 
 /**
@@ -49,47 +48,19 @@ interface ApiServicio {
 
 object ClienteRed {
 
-    /**
-     * Dirección del backend.
-     *
-     *   Emulador por defecto              http://10.0.2.2:8080/
-     *   Debug con laboratorioAdbReverse   http://127.0.0.1:8080/
-     *
-     * Con la segunda opción, ADB reenvía el puerto local del dispositivo al
-     * backend del ordenador. Consulta los pasos de laboratorio en el README.
-     *
-     * PARA EL CUADERNO: esta dirección queda escrita en el artefacto y se
-     * recupera decompilándolo, tal como comprobaste en la práctica P2.1.
-     * ¿Es eso un problema? ¿Y si en lugar de una dirección fuera una clave?
-     */
-    const val BASE_URL = BuildConfig.LAB_BASE_URL
+    const val BASE_URL = BuildConfig.BACKEND_URL
 
     fun crear(): ApiServicio {
 
-        /*
-         * El interceptor de registro imprime en logcat cada petición y cada
-         * respuesta. Con nivel BODY imprime también el cuerpo, así que en la
-         * petición de acceso saldrán el usuario y la contraseña en claro.
-         *
-         * Es comodísimo mientras se desarrolla y es un desastre si llega a la
-         * versión publicada.
-         *
-         * PARA EL CUADERNO: ¿qué ocurriría si este interceptor se publicase?
-         * ¿Quién podría leer esos registros, y con qué privilegios? Se retoma
-         * en la sesión 3.6.
-         */
         // P3.1 (paso 2c): BASIC solo muestra método, URL, código y tamaño.
         // Ni cabeceras (Authorization) ni cuerpos (contraseña, token, datos).
         val registro = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BASIC
         }
 
-        /*
-         * El cliente HTTP se construye UNA VEZ y lo hereda toda la aplicación.
-         * Es la idea de la sesión 2.5.4: cuando en P3.2 se añada el anclaje de
-         * certificados se tocará sólo aquí, y ninguna pantalla se entera.
-         */
         val cliente = OkHttpClient.Builder()
+            // Evita trasladar una petición a un origen con otra política de confianza.
+            .followRedirects(false)
             .addInterceptor(registro)
             .build()
 
