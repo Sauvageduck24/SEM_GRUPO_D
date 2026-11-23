@@ -41,3 +41,7 @@ secrets.properties
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Ejecuciones locales del laboratorio (SDK, APK, cachés y registros de prueba)
+laboratorio/.local/
+laboratorio/__pycache__/
