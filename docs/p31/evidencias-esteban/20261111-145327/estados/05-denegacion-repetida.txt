@@ -1,0 +1,12 @@
+Prueba real en MainActivity; listado con fixture local, sin backend ni autenticación.
+CAMERA concedido: false
+Ventana: es.uma.seguridad.salud
+La cámara se usará para fotografiar informes médicos. Puedes consultar tus registros sin este permiso.
+El permiso está desactivado. Puedes habilitarlo en Ajustes.
+Abrir ajustes de cámara
+Informe ficticio de cámara
+Contenido ficticio, sin datos médicos reales.
+2026-11-11
+Mis registros de salud
+Recargar
+Salir

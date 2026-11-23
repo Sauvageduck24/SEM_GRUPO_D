@@ -1,0 +1,13 @@
+{
+  "fecha": "2026-11-11T14:53:47.5463312+01:00",
+  "rama": "feature/esteban-p31-camara-informes",
+  "base": "eab801c0692dbdc11bac27cac72bd4c1735f6e75",
+  "paquete": "es.uma.seguridad.salud",
+  "android": "17",
+  "sdk": "37",
+  "apk_sha256": "7B60A3D667FA8AA6C9C893B5F551968884900A52C89D23ADDDCCF9892957ED65",
+  "pruebas": "3 pruebas instrumentadas y 1 repetida después de revocar CAMERA",
+  "alcance": "MainActivity con listado ficticio local; sin backend, sin login, sin captura de informes",
+  "sin_camara": "Simulado mediante el parámetro del componente; el emulador sí tiene cámara",
+  "permiso_original_concedido": false
+}

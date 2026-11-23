@@ -1,0 +1,11 @@
+Prueba real en MainActivity; listado con fixture local, sin backend ni autenticación.
+CAMERA concedido: true
+Ventana: es.uma.seguridad.salud
+Permiso de cámara concedido
+La captura de informes aún no está disponible.
+Informe ficticio de cámara
+Contenido ficticio, sin datos médicos reales.
+2026-11-11
+Mis registros de salud
+Recargar
+Salir

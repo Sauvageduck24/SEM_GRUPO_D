@@ -1,0 +1,7 @@
+Prueba real en MainActivity; listado con fixture local, sin backend ni autenticación.
+CAMERA concedido: false
+Ventana: com.google.android.permissioncontroller
+Allow AppSalud to take pictures and record video?
+While using the app
+Only this time
+Don’t allow
